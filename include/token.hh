@@ -3,12 +3,13 @@
 
 #include<stack>
 #include<queue>
+#include<memory>
 
 namespace scalc {
 
 class AbstractToken;
-using TokenStack = std::stack<AbstractToken>;
-using TokenQueue = std::queue<AbstractToken>;
+using TokenStack = std::stack<std::shared_ptr<const AbstractToken>>;
+using TokenQueue = std::queue<std::shared_ptr<const AbstractToken>>;
 
 class AbstractToken {
 private:
@@ -17,7 +18,7 @@ private:
 public:
   inline void parse(TokenQueue& oq, TokenStack& os) const { _parse(oq, os); }
   inline void eval(TokenQueue& oq, TokenStack& os) const { _eval(oq, os); }
-  virtual ~AbstractToken()=0;
+  virtual ~AbstractToken() {};
 };
 
 } // namespace scalc

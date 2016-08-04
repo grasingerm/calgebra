@@ -1,12 +1,74 @@
 #include "operator.hh"
+#include "operand.hh"
+#include <stdexcept>
+#include <cmath>
 
 using namespace scalc;
 
-virtual void 
-AbstractOperator::_parse(TokenQueue& postfix_queue, TokenStack& opstack) {
-  while (!opstack.empty())
+int getTokenPrecedence(const AbstractToken* ptoken) {
+  const AbstractOperator* poperator;
+  if ( (poperator = dynamic_cast<const AbstractOperator*>(ptoken)) )
+    return poperator->getPrecedence();
+
+  throw std::logic_error("Non-operator found where operator was expected");
 }
 
-virtual void Operand::_eval(TokenQueue& postfix_queue, TokenStack& token_stack) {
-  token_stack.push(this);
+void 
+AbstractOperator::_parse(TokenQueue& postfix_queue, TokenStack& opstack) const {
+  while (!opstack.empty() && 
+         ((this->associativity == Associativity::LEFT && 
+           this->precedence <= getTokenPrecedence(opstack.top().get())) ||
+          this->precedence < getTokenPrecedence(opstack.top().get())))
+  {
+    postfix_queue.push(opstack.top());
+    opstack.pop();
+  }
+  opstack.emplace(this);
+}
+
+void Carrot::_eval(TokenQueue&, TokenStack& token_stack) const {
+  auto value0 = popOperandValue(token_stack, "'^' operator");
+  auto value1 = popOperandValue(token_stack, "'^' operator");
+
+  auto result = std::pow(value1, value0);
+  token_stack.emplace(new Operand(result));
+}
+
+void Negation::_eval(TokenQueue&, TokenStack& token_stack) const {
+  auto value0 = popOperandValue(token_stack, "unary '-' operator");
+
+  auto result = -value0;
+  token_stack.emplace(new Operand(result));
+}
+
+void Multiplication::_eval(TokenQueue&, TokenStack& token_stack) const {
+  auto value0 = popOperandValue(token_stack, "'*' operator");
+  auto value1 = popOperandValue(token_stack, "'*' operator");
+
+  auto result = value1 * value0;
+  token_stack.emplace(new Operand(result));
+}
+
+void Division::_eval(TokenQueue&, TokenStack& token_stack) const {
+  auto value0 = popOperandValue(token_stack, "'/' operator");
+  auto value1 = popOperandValue(token_stack, "'/' operator");
+
+  auto result = value1 / value0;
+  token_stack.emplace(new Operand(result));
+}
+
+void Addition::_eval(TokenQueue&, TokenStack& token_stack) const {
+  auto value0 = popOperandValue(token_stack, "'+' operator");
+  auto value1 = popOperandValue(token_stack, "'+' operator");
+
+  auto result = value1 + value0;
+  token_stack.emplace(new Operand(result));
+}
+
+void Subtraction::_eval(TokenQueue&, TokenStack& token_stack) const {
+  auto value0 = popOperandValue(token_stack, "'-' operator");
+  auto value1 = popOperandValue(token_stack, "'-' operator");
+
+  auto result = value1 - value0;
+  token_stack.emplace(new Operand(result));
 }

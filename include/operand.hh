@@ -2,6 +2,7 @@
 #define __OPERAND_HH
 
 #include "token.hh"
+#include <cstring>
 
 namespace scalc {
 
@@ -11,9 +12,12 @@ private:
   virtual void _parse(TokenQueue&, TokenStack&) const;
   virtual void _eval(TokenQueue&, TokenStack&) const; 
 public:
-  public Operand(const double value) : value(value) {}
+  Operand(const double value) : value(value) {}
   virtual ~Operand() {}
+  inline auto getValue() const noexcept { return value; }
 };
+
+double popOperandValue(TokenStack& token_stack, const char* what_for="operator");
 
 } // namespace scalc
 
