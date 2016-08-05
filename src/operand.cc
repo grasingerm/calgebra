@@ -10,8 +10,7 @@ void Operand::_eval(TokenQueue&, TokenStack& token_stack) const {
   token_stack.emplace(this);
 }
 
-double popOperandValue(TokenStack& token_stack, const char* what_for) 
-  throw (std::logic_error) {
+double popOperandValue(TokenStack& token_stack, const char* what_for) {
   char what[256] = "Not enough operands for ";
 
   const auto ptoken = (!token_stack.empty()) ? 

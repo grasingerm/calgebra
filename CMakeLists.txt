@@ -14,8 +14,9 @@ include_directories(include)
 
 file(GLOB SOURCES src/*.cc)
 
-add_executable(test_parser test/test_parser.cc src/operand.cc src/operator.cc src/parenthesis.cc src/mfunction.cc src/parser.cc)
+#add_executable(test_parser test/test_parser.cc src/operand.cc src/operator.cc src/parenthesis.cc src/mfunction.cc src/parser.cc)
+add_executable(test_popoperand test/test_popoperand.cc src/operand.cc)
 
-if (UNIX)
-    target_link_libraries(test_parser m)
-endif (UNIX)
+#if (UNIX)
+#    target_link_libraries(test_parser m)
+#endif (UNIX)
