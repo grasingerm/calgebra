@@ -15,6 +15,15 @@ int main() {
   assert(popOperandValue(token_stack) == 6.28);
   assert(popOperandValue(token_stack) == 3.14);
 
+  try {
+    popOperandValue(token_stack);
+    cerr << "This should not be printed!!!!!\n";
+  }
+  catch (const std::exception& e) {
+    cout << "Exception thrown! Good.\n";
+    cout << e.what() << '\n';
+  }
+
   cout << "Tests passed.\n";
 
   return 0;

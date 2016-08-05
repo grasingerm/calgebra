@@ -8,9 +8,11 @@
 #include <cstring>
 #include <string>
 #include <stdexcept>
+#include <sstream>
 
-using namespace scalc;
 using namespace std;
+
+namespace scalc {
 
 TokenQueue Parser::exprToInfix(const char* expr) {
   TokenQueue infix_queue;
@@ -117,4 +119,53 @@ TokenQueue Parser::exprToInfix(const char* expr) {
   }
 
   return infix_queue;
+}
+
+TokenQueue Parser::infixToPostfix(TokenQueue& infix_queue) {
+  TokenQueue postfix_queue;
+  TokenStack opstack;
+
+  while (!infix_queue.empty()) {
+    const auto ptoken = infix_queue.front();
+    ptoken->parse(postfix_queue, opstack);
+    infix_queue.pop();
+  }
+
+  while (!opstack.empty()) {
+    const auto ptoken = opstack.top();
+    postfix_queue.emplace(ptoken);
+    opstack.pop();
+  }
+
+  return postfix_queue;
+}
+
+double Parser::evaluatePostfix(TokenQueue& postfix_queue) {
+  TokenStack token_stack;
+
+  while (!postfix_queue.empty()) {
+    const auto ptoken = postfix_queue.front();
+    ptoken->eval(postfix_queue, token_stack);
+    postfix_queue.pop();
+  }
+
+  const double retval = popOperandValue(token_stack, "final value");
+  if (!token_stack.empty()) throw logic_error("Tokens left on the stack");
+
+  return retval;
+}
+
+double Parser::valueEvaluateExpr(const char* expr) {
+  TokenQueue infix_queue = exprToInfix(expr);
+  TokenQueue postfix_queue = infixToPostfix(infix_queue);
+  if (postfix_queue.empty()) throw logic_error("Expression is empty of operands");
+  return evaluatePostfix(postfix_queue);
+}
+
+string Parser::formatEvaluateExpr(const char* expr) {
+  stringstream ss;
+  ss << "ans = " << valueEvaluateExpr(expr);
+  return ss.str();
+}
+
 }

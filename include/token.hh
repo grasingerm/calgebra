@@ -18,7 +18,7 @@ private:
 public:
   inline void parse(TokenQueue& oq, TokenStack& os) const { _parse(oq, os); }
   inline void eval(TokenQueue& oq, TokenStack& os) const { _eval(oq, os); }
-  virtual ~AbstractToken() {};
+  virtual ~AbstractToken() {}
 };
 
 } // namespace scalc

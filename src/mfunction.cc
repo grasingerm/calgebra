@@ -1,10 +1,10 @@
 #include "mfunction.hh"
 #include "operand.hh"
 
-using namespace scalc;
+namespace scalc {
 
 void MFunction::_parse(TokenQueue&, TokenStack& opstack) const {
-  opstack.emplace(this);
+  opstack.emplace(new MFunction(*this));
 }
 
 void MFunction::_eval(TokenQueue&, TokenStack& token_stack) const {
@@ -12,4 +12,6 @@ void MFunction::_eval(TokenQueue&, TokenStack& token_stack) const {
 
   auto result = this->f(value0);
   token_stack.emplace(new Operand(result));
+}
+
 }

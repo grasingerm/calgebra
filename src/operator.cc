@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <cmath>
 
-using namespace scalc;
+namespace scalc {
 
 int getTokenPrecedence(const AbstractToken* ptoken) {
   const AbstractOperator* poperator;
@@ -16,14 +16,15 @@ int getTokenPrecedence(const AbstractToken* ptoken) {
 void 
 AbstractOperator::_parse(TokenQueue& postfix_queue, TokenStack& opstack) const {
   while (!opstack.empty() && 
+         dynamic_cast<const AbstractOperator*>(opstack.top().get()) != nullptr && 
          ((this->associativity == Associativity::LEFT && 
            this->precedence <= getTokenPrecedence(opstack.top().get())) ||
           this->precedence < getTokenPrecedence(opstack.top().get())))
   {
-    postfix_queue.push(opstack.top());
+    postfix_queue.emplace(opstack.top());
     opstack.pop();
   }
-  opstack.emplace(this);
+  this->_pushToTokenStack(opstack);
 }
 
 void Carrot::_eval(TokenQueue&, TokenStack& token_stack) const {
@@ -71,4 +72,6 @@ void Subtraction::_eval(TokenQueue&, TokenStack& token_stack) const {
 
   auto result = value1 - value0;
   token_stack.emplace(new Operand(result));
+}
+
 }

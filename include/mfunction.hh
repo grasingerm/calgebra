@@ -3,6 +3,7 @@
 
 #include "token.hh"
 #include <string>
+#include <iostream>
 
 namespace scalc {
 
@@ -17,7 +18,13 @@ public:
     : f(f), functionName(functionName) {}
   MFunction(double (*f)(double), const char* functionName) 
     : f(f), functionName(std::string(functionName)) {}
+  MFunction(const MFunction& mf) : f(mf.f), functionName(mf.functionName) {}
   virtual ~MFunction() {}
+
+  friend std::ostream& operator<<(std::ostream& os, const MFunction& mf) {
+    os << mf.functionName << "(real x)";
+    return os;
+  }
 };
 
 inline bool isTokenFunction(const AbstractToken* ptoken) {

@@ -1,13 +1,13 @@
 #include "operand.hh"
 
-using namespace scalc;
+namespace scalc {
 
 void Operand::_parse(TokenQueue& postfix_queue, TokenStack&) const {
-  postfix_queue.emplace(this);
+  postfix_queue.emplace(new Operand(*this));
 }
 
 void Operand::_eval(TokenQueue&, TokenStack& token_stack) const {
-  token_stack.emplace(this);
+  token_stack.emplace(new Operand(*this));
 }
 
 double popOperandValue(TokenStack& token_stack, const char* what_for) {
@@ -23,4 +23,6 @@ double popOperandValue(TokenStack& token_stack, const char* what_for) {
   token_stack.pop();
 
   return retval;
+}
+
 }

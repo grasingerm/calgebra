@@ -16,6 +16,9 @@ public:
   TokenQueue exprToInfix(const char*);
   TokenQueue infixToPostfix(TokenQueue&);
   double evaluatePostfix(TokenQueue&);
+
+  double valueEvaluateExpr(const char*);
+  std::string formatEvaluateExpr(const char*);
 };
 
 }

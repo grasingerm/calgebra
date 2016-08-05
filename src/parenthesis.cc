@@ -2,10 +2,10 @@
 #include "mfunction.hh"
 #include <stdexcept>
 
-using namespace scalc;
+namespace scalc {
 
 void LeftParen::_parse(TokenQueue&, TokenStack& opstack) const {
-  opstack.emplace(this);
+  opstack.emplace(new LeftParen());
 }
 
 void LeftParen::_eval(TokenQueue&, TokenStack&) const {
@@ -32,4 +32,6 @@ void RightParen::_parse(TokenQueue& postfix_queue, TokenStack& opstack) const {
 
 void RightParen::_eval(TokenQueue&, TokenStack&) const {
   throw std::logic_error("Parenthesis should not be evaluated");
+}
+
 }

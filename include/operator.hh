@@ -3,6 +3,7 @@
 
 #include "token.hh"
 #include <stdexcept>
+#include <iostream>
 
 namespace scalc {
 
@@ -13,7 +14,8 @@ private:
   int precedence;
   Associativity associativity;
   virtual void _parse(TokenQueue&, TokenStack&) const;
-  virtual void _eval(TokenQueue&, TokenStack&) const; 
+  virtual void _eval(TokenQueue&, TokenStack&) const=0; 
+  virtual void _pushToTokenStack(TokenStack&) const=0;
 public:
   AbstractOperator(const int precedence, const Associativity associativity) :
     precedence(precedence), associativity(associativity) {}
@@ -34,6 +36,14 @@ public:
   virtual ~Carrot() {}
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
+  inline virtual void _pushToTokenStack(TokenStack& ts) const { 
+    ts.emplace(new Carrot()); 
+  }
+  
+  friend std::ostream& operator<<(std::ostream& os, const Carrot&) {
+    os << '^';
+    return os;
+  }
 };
 
 class Negation : public AbstractOperator {
@@ -42,6 +52,14 @@ public:
   virtual ~Negation() {}
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
+  inline virtual void _pushToTokenStack(TokenStack& ts) const { 
+    ts.emplace(new Negation()); 
+  }
+  
+  friend std::ostream& operator<<(std::ostream& os, const Negation&) {
+    os << '-';
+    return os;
+  }
 };
 
 class Multiplication : public AbstractOperator {
@@ -50,6 +68,14 @@ public:
   virtual ~Multiplication() {}
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
+  inline virtual void _pushToTokenStack(TokenStack& ts) const { 
+    ts.emplace(new Multiplication()); 
+  }
+  
+  friend std::ostream& operator<<(std::ostream& os, const Multiplication&) {
+    os << '*';
+    return os;
+  }
 };
 
 class Division : public AbstractOperator {
@@ -58,6 +84,14 @@ public:
   virtual ~Division() {}
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
+  inline virtual void _pushToTokenStack(TokenStack& ts) const { 
+    ts.emplace(new Division()); 
+  }
+  
+  friend std::ostream& operator<<(std::ostream& os, const Division&) {
+    os << '/';
+    return os;
+  }
 };
 
 class Addition : public AbstractOperator {
@@ -66,6 +100,14 @@ public:
   virtual ~Addition() {}
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
+  inline virtual void _pushToTokenStack(TokenStack& ts) const { 
+    ts.emplace(new Addition()); 
+  }
+  
+  friend std::ostream& operator<<(std::ostream& os, const Addition&) {
+    os << '+';
+    return os;
+  }
 };
 
 class Subtraction : public AbstractOperator {
@@ -74,6 +116,14 @@ public:
   virtual ~Subtraction() {}
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
+  inline virtual void _pushToTokenStack(TokenStack& ts) const { 
+    ts.emplace(new Subtraction()); 
+  }
+  
+  friend std::ostream& operator<<(std::ostream& os, const Subtraction&) {
+    os << '-';
+    return os;
+  }
 };
 
 } // namespace scalc

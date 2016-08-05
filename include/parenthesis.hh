@@ -3,6 +3,7 @@
 
 #include "token.hh"
 #include "mfunction.hh"
+#include <iostream>
 
 namespace scalc {
 
@@ -12,6 +13,11 @@ private:
   virtual void _eval(TokenQueue&, TokenStack&) const; 
 public:
   virtual ~LeftParen() {}
+  
+  friend std::ostream& operator<<(std::ostream& os, const LeftParen&) {
+    os << '(';
+    return os;
+  }
 };
 
 class RightParen : public AbstractToken {
@@ -20,6 +26,11 @@ private:
   virtual void _eval(TokenQueue&, TokenStack&) const; 
 public:
   virtual ~RightParen() {}
+  
+  friend std::ostream& operator<<(std::ostream& os, const RightParen&) {
+    os << ')';
+    return os;
+  }
 };
 
 inline bool isTokenRightParen(const AbstractToken* ptoken) {
