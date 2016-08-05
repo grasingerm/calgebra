@@ -21,7 +21,7 @@ int main() {
       cout << ans << "\n\n";
     }
     catch (const std::exception& e) {
-      cerr << "ERROR: " << e.what() << '\n';
+      cerr << "ERROR: " << e.what() << "\n\n";
     }
 
     cout << prompt << '\n';

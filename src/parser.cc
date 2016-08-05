@@ -54,6 +54,10 @@ TokenQueue Parser::exprToInfix(const char* expr) {
       }
       case '(':
       {
+        if (!infix_queue.empty() && !isTokenOperator(infix_queue.back().get())
+            && !isTokenFunction(infix_queue.back().get()))
+          infix_queue.emplace(new Multiplication());
+
         infix_queue.emplace(new LeftParen());
         ++expr;
         break;
@@ -61,6 +65,9 @@ TokenQueue Parser::exprToInfix(const char* expr) {
       case ')':
       {
         infix_queue.emplace(new RightParen());
+        while (*(expr+1) == ' ') ++expr;
+        if (isalnum(*(expr+1)) || *(expr+1) == '(') 
+          infix_queue.emplace(new Multiplication());
         ++expr;
         break;
       }
@@ -89,6 +96,9 @@ TokenQueue Parser::exprToInfix(const char* expr) {
       }
       default:
       {
+        if (!infix_queue.empty() && isTokenOperand(infix_queue.back().get()))
+          infix_queue.emplace(new Multiplication());
+
         const char* pend = expr;
         size_t n = 1;
         // TODO: should we allow alpha numerics? e.g. log10

@@ -241,6 +241,16 @@ int main() {
   assert(abs(-0.8660092970238366 - parser.valueEvaluateExpr("sin(cos(3.14) / 3 * 3.1415)")) < eps);
   assert(abs(4.0 - parser.valueEvaluateExpr("-(0.1 - 4.1)")) < eps);
   assert(abs(4.2 - parser.valueEvaluateExpr("-(-0.1 - 4.1)")) < eps);
+  cout << "(3+(4-1))*5 = " << parser.valueEvaluateExpr("(3+(4-1))*5") << '\n';
+  assert(abs(30.0 - parser.valueEvaluateExpr("(3+(4-1))*5")) < eps);
+  cout << "(3+(4-1))5 = " << parser.valueEvaluateExpr("(3+(4-1))5") << '\n';
+  assert(abs(30.0 - parser.valueEvaluateExpr("(3+(4-1))5")) < eps);
+  cout << "(3+(4-1)) 5 = " << parser.valueEvaluateExpr("(3+(4-1)) 5") << '\n';
+  assert(abs(30.0 - parser.valueEvaluateExpr("(3+(4-1)) 5")) < eps);
+  cout << "5(3+(4-1)) = " << parser.valueEvaluateExpr("5(3+(4-1))") << '\n';
+  assert(abs(30.0 - parser.valueEvaluateExpr("5(3+(4-1))")) < eps);
+  cout << "5 (3+(4-1)) = " << parser.valueEvaluateExpr("5 (3+(4-1))") << '\n';
+  assert(abs(30.0 - parser.valueEvaluateExpr("5 (3+(4-1))")) < eps);
   cout << '\n';
   try {
     cout << "Evaluating \n";

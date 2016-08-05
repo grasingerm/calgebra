@@ -26,6 +26,10 @@ public:
 
 double popOperandValue(TokenStack& token_stack, const char* what_for="operator");
 
+inline bool isTokenOperand(const AbstractToken* ptoken) {
+  return (dynamic_cast<const Operand*>(ptoken) != nullptr);
+}
+
 } // namespace scalc
 
 #endif // __OPERAND_HH
