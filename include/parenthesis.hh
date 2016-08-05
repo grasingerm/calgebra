@@ -13,6 +13,7 @@ private:
   virtual void _eval(TokenQueue&, TokenStack&) const; 
 public:
   virtual ~LeftParen() {}
+  virtual std::string toString() const { return std::string(1, '('); }
   
   friend std::ostream& operator<<(std::ostream& os, const LeftParen&) {
     os << '(';
@@ -26,6 +27,7 @@ private:
   virtual void _eval(TokenQueue&, TokenStack&) const; 
 public:
   virtual ~RightParen() {}
+  virtual std::string toString() const { return std::string(1, ')'); }
   
   friend std::ostream& operator<<(std::ostream& os, const RightParen&) {
     os << ')';

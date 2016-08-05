@@ -20,6 +20,8 @@ public:
     : f(f), functionName(std::string(functionName)) {}
   MFunction(const MFunction& mf) : f(mf.f), functionName(mf.functionName) {}
   virtual ~MFunction() {}
+  virtual std::string toString() const 
+    { return functionName + std::string("(real x)"); }
 
   friend std::ostream& operator<<(std::ostream& os, const MFunction& mf) {
     os << mf.functionName << "(real x)";

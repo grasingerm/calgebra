@@ -99,6 +99,12 @@ TokenQueue Parser::exprToInfix(const char* expr) {
         if (!infix_queue.empty() && isTokenOperand(infix_queue.back().get()))
           infix_queue.emplace(new Multiplication());
 
+        if (this->mode == ParserMode::LINEAR_EQ_SOLVER && *expr == this->x) {
+          infix_queue.emplace(new X(this->x));
+          ++expr;
+          break;
+        }
+
         const char* pend = expr;
         size_t n = 1;
         // TODO: should we allow alpha numerics? e.g. log10
@@ -174,8 +180,52 @@ double Parser::valueEvaluateExpr(const char* expr) {
 
 string Parser::formatEvaluateExpr(const char* expr) {
   stringstream ss;
-  ss << "ans = " << valueEvaluateExpr(expr);
-  return ss.str();
+  if (mode == ParserMode::NORMAL) {
+    ss << "ans = " << valueEvaluateExpr(expr);
+    return ss.str();
+  }
+  else if (mode == ParserMode::LINEAR_EQ_SOLVER) {
+    string sexpr(expr);
+    auto eqpos = sexpr.find('=');
+    if (eqpos != string::npos) {
+
+      auto lhs_str = sexpr.substr(0, eqpos-1);
+      auto rhs_str = sexpr.substr(eqpos+1);
+
+      if (rhs_str.find('=') != string::npos)
+        throw logic_error("More than one equals sign '=' in expression");
+
+      auto lhs_inqueue = exprToInfix(lhs_str.c_str());
+      auto lhs_posqueue = infixToPostfix(lhs_inqueue);
+      auto rhs_inqueue = exprToInfix(rhs_str.c_str());
+      auto rhs_posqueue = infixToPostfix(rhs_inqueue);
+
+      TokenStack token_stack;
+      while (!lhs_posqueue.empty()) {
+        const auto ptoken = lhs_posqueue.front();
+        ptoken->simplify(rhs_posqueue, token_stack);
+        lhs_posqueue.pop();
+      }
+
+      while (!token_stack.empty() && isTokenOperator(token_stack.top().get())) {
+        const auto ptoken = token_stack.top();
+        token_stack.pop();
+        if (isTokenX(token_stack.top().get())) token_stack.pop();
+        if (isTokenOperand(token_stack.top().get())) {
+          rhs_posqueue.emplace(token_stack.top());
+          token_stack.pop();
+        }
+        else throw logic_error("Operators unbalanced on LHS of expression");
+        rhs_posqueue.emplace(
+            dynamic_cast<const AbstractOperator*>(ptoken.get())->getInverse());
+      }
+
+      ss << "x = " << evaluatePostfix(rhs_posqueue);
+      return ss.str();
+    }
+    else throw logic_error("No equals sign '=' in expression");
+  }
+  else throw logic_error("Parser mode is invalid");
 }
 
 }

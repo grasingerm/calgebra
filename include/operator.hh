@@ -4,6 +4,7 @@
 #include "token.hh"
 #include <stdexcept>
 #include <iostream>
+#include <memory>
 
 namespace scalc {
 
@@ -20,6 +21,9 @@ public:
   AbstractOperator(const int precedence, const Associativity associativity) :
     precedence(precedence), associativity(associativity) {}
   virtual ~AbstractOperator() {}
+  virtual std::string toString() const=0;
+  virtual void simplify(TokenQueue&, TokenStack&) const;
+  virtual TokenHandler getInverse() const=0;
   inline auto getPrecedence() const noexcept { return precedence; }
   inline auto getAssociativity() const noexcept { return associativity; }
 };
@@ -33,7 +37,12 @@ int getTokenPrecedence(const AbstractToken* ptoken);
 class Carrot : public AbstractOperator {
 public:
   Carrot() : AbstractOperator(5, Associativity::RIGHT) {}
+  virtual TokenHandler getInverse() const { 
+    throw std::logic_error("Cannot solve equations with '^' operator"); 
+    return TokenHandler(nullptr);
+  }
   virtual ~Carrot() {}
+  virtual std::string toString() const { return std::string(1, '^'); }
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
   inline virtual void _pushToTokenStack(TokenStack& ts) const { 
@@ -50,6 +59,10 @@ class Negation : public AbstractOperator {
 public:
   Negation() : AbstractOperator(4, Associativity::RIGHT) {}
   virtual ~Negation() {}
+  virtual TokenHandler getInverse() const 
+    { return TokenHandler(new Negation()); }
+  virtual void simplify(TokenQueue&, TokenStack&) const;
+  virtual std::string toString() const { return std::string(1, '-'); }
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
   inline virtual void _pushToTokenStack(TokenStack& ts) const { 
@@ -66,6 +79,8 @@ class Multiplication : public AbstractOperator {
 public:
   Multiplication() : AbstractOperator(3, Associativity::LEFT) {}
   virtual ~Multiplication() {}
+  virtual TokenHandler getInverse() const;
+  virtual std::string toString() const { return std::string(1, '*'); }
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
   inline virtual void _pushToTokenStack(TokenStack& ts) const { 
@@ -82,6 +97,8 @@ class Division : public AbstractOperator {
 public:
   Division() : AbstractOperator(3, Associativity::LEFT) {}
   virtual ~Division() {}
+  virtual TokenHandler getInverse() const;
+  virtual std::string toString() const { return std::string(1, '/'); }
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
   inline virtual void _pushToTokenStack(TokenStack& ts) const { 
@@ -98,6 +115,8 @@ class Addition : public AbstractOperator {
 public:
   Addition() : AbstractOperator(2, Associativity::LEFT) {}
   virtual ~Addition() {}
+  virtual TokenHandler getInverse() const;
+  virtual std::string toString() const { return std::string(1, '+'); }
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
   inline virtual void _pushToTokenStack(TokenStack& ts) const { 
@@ -114,6 +133,8 @@ class Subtraction : public AbstractOperator {
 public:
   Subtraction() : AbstractOperator(2, Associativity::LEFT) {}
   virtual ~Subtraction() {}
+  virtual TokenHandler getInverse() const;
+  virtual std::string toString() const { return std::string(1, '-'); }
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;
   inline virtual void _pushToTokenStack(TokenStack& ts) const { 

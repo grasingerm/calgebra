@@ -25,4 +25,12 @@ double popOperandValue(TokenStack& token_stack, const char* what_for) {
   return retval;
 }
 
+void X::_parse(TokenQueue& postfix_queue, TokenStack&) const {
+  postfix_queue.emplace(new X(*this));
+}
+
+void X::_eval(TokenQueue&, TokenStack& token_stack) const {
+  token_stack.emplace(new X(*this));
+}
+
 }

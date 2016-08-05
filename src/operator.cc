@@ -74,4 +74,36 @@ void Subtraction::_eval(TokenQueue&, TokenStack& token_stack) const {
   token_stack.emplace(new Operand(result));
 }
 
+TokenHandler Multiplication::getInverse() const { 
+  return TokenHandler(new Division()); 
+}
+
+TokenHandler Division::getInverse() const { 
+  return TokenHandler(new Multiplication()); 
+}
+
+TokenHandler Addition::getInverse() const { 
+  return TokenHandler(new Subtraction()); 
+}
+
+TokenHandler Subtraction::getInverse() const { 
+  return TokenHandler(new Addition()); 
+}
+
+void AbstractOperator::simplify(TokenQueue& pflhs, TokenStack& token_stack) const {
+  if (token_stack.empty()) 
+    throw std::logic_error("Misbalanced expression");
+
+  if (isTokenX(token_stack.top().get())) this->_pushToTokenStack(token_stack);
+  else {
+    pflhs.emplace(token_stack.top());
+    token_stack.pop();
+    pflhs.emplace(this->getInverse());
+  }
+}
+
+void Negation::simplify(TokenQueue& pflhs, TokenStack&) const {
+  pflhs.emplace(new Negation());
+}
+
 }

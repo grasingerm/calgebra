@@ -333,6 +333,20 @@ int main() {
     cout << e.what() << '\n';
   }
 
+  cout << "\nTESTING Parser::formatEvaluateExpr(const char*) in solver mode\n";
+  cout << "=============================================\n\n";
+  parser.setMode(ParserMode::LINEAR_EQ_SOLVER);
+  cout << "Solving 3x + 5 = 1\n";
+  cout << parser.formatEvaluateExpr("3x + 5 = 1") << '\n';
+  cout << "Solving 3x = 1\n";
+  cout << parser.formatEvaluateExpr("3x = 1") << '\n';
+  cout << "Solving x - 1 = (1 - 11)\n";
+  cout << parser.formatEvaluateExpr("x - 1 = (1 - 11)") << '\n';
+  cout << "Solving 3(x - 1) = 3(1 - 11)\n";
+  cout << parser.formatEvaluateExpr("3(x - 1) = 3(1 - 11)") << '\n';
+  cout << "Solving -(x + 1) = 3(1 - 11) ^ 2\n";
+  cout << parser.formatEvaluateExpr("-(x + 1) = 3(1 - 11) ^ 2") << '\n';
+
   cout << "\n\n=============================================\n\n";
   cout << "\nTests passed.\n";
 

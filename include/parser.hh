@@ -11,8 +11,10 @@ enum class ParserMode { NORMAL, LINEAR_EQ_SOLVER };
 class Parser {
 private:
   ParserMode mode;
+  char x;
 public:
-  Parser() : mode(ParserMode::NORMAL) {} 
+  Parser() : mode(ParserMode::NORMAL), x('x') {} 
+  void setMode(ParserMode newmode) { mode = newmode; }
   TokenQueue exprToInfix(const char*);
   TokenQueue infixToPostfix(TokenQueue&);
   double evaluatePostfix(TokenQueue&);
