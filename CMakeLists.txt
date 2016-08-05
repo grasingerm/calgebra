@@ -16,7 +16,9 @@ file(GLOB SOURCES src/*.cc)
 
 add_executable(test_parser test/test_parser.cc ${SOURCES})
 add_executable(test_popoperand test/test_popoperand.cc src/operand.cc)
+add_executable(scalc src/main/scalc.cc ${SOURCES})
 
-#if (UNIX)
-#    target_link_libraries(test_parser m)
-#endif (UNIX)
+if (UNIX)
+    target_link_libraries(test_parser m)
+    target_link_libraries(scalc m)
+endif (UNIX)
