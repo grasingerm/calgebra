@@ -15,6 +15,7 @@ struct monomial
 std::ostream& operator<<(std::ostream&, const monomial&);
 monomial operator+(const monomial&, const monomial&);
 monomial operator-(const monomial&, const monomial&);
+monomial operator-(const monomial&);
 monomial operator*(const monomial&, const monomial&);
 monomial operator/(const monomial&, const monomial&);
 

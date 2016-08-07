@@ -3,6 +3,7 @@
 #include "operator.hh"
 #include "mfunction.hh"
 #include "parenthesis.hh"
+#include "monomial.hh"
 #include <cmath>
 #include <memory>
 #include <cstring>
@@ -89,8 +90,8 @@ TokenQueue Parser::exprToInfix(const char* expr) {
       case '0':
       {
         char* pend;
-        const double value = strtod(expr, &pend);
-        infix_queue.emplace(new Operand(value));
+        const monomial m {0.0, strtod(expr, &pend)};
+        infix_queue.emplace(new Operand(m));
         expr = pend;
         break;
       }
@@ -99,8 +100,9 @@ TokenQueue Parser::exprToInfix(const char* expr) {
         if (!infix_queue.empty() && isTokenOperand(infix_queue.back().get()))
           infix_queue.emplace(new Multiplication());
 
-        if (this->mode == ParserMode::LINEAR_EQ_SOLVER && *expr == this->x) {
-          infix_queue.emplace(new X(this->x));
+        if (*expr == this->x) {
+          const monomial m {1.0, 0.0};
+          infix_queue.emplace(new Operand(m));
           ++expr;
           break;
         }
