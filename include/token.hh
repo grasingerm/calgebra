@@ -21,7 +21,6 @@ private:
 public:
   inline void parse(TokenQueue& oq, TokenStack& os) const { _parse(oq, os); }
   inline void eval(TokenQueue& oq, TokenStack& os) const { _eval(oq, os); }
-  virtual void simplify(TokenQueue& oq, TokenStack& os) const { _eval(oq, os); }
   virtual ~AbstractToken() {}
   virtual std::string toString() const=0;
 };

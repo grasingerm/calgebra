@@ -233,24 +233,24 @@ int main() {
   cout << "=============================================\n\n";
   const double eps = 1e-7;
   cout << "3 + 4 * 2 / (1 - 5) ^ 2 ^ 3 = " << parser.valueEvaluateExpr("3 + 4 * 2 / (1 - 5) ^ 2 ^ 3") << '\n';
-  assert(abs(3.0001220703125 - parser.valueEvaluateExpr("3 + 4 * 2 / (1 - 5) ^ 2 ^ 3")) < eps);
+  assert(abs((3.0001220703125 - parser.valueEvaluateExpr("3 + 4 * 2 / (1 - 5) ^ 2 ^ 3")).c) < eps);
   cout << "3 + 0 * 2 = " << parser.valueEvaluateExpr("3 + 0 * 2") << '\n';
-  assert(abs(3.0 - parser.valueEvaluateExpr("3 + 0 * 2")) < eps);
+  assert(abs((3.0 - parser.valueEvaluateExpr("3 + 0 * 2")).c) < eps);
   cout << "log(exp(1.0)) = " << parser.valueEvaluateExpr("log(exp(1.0))") << '\n';
-  assert(abs(1.0 - parser.valueEvaluateExpr("log(exp(1.0))")) < eps);
-  assert(abs(-0.8660092970238366 - parser.valueEvaluateExpr("sin(cos(3.14) / 3 * 3.1415)")) < eps);
-  assert(abs(4.0 - parser.valueEvaluateExpr("-(0.1 - 4.1)")) < eps);
-  assert(abs(4.2 - parser.valueEvaluateExpr("-(-0.1 - 4.1)")) < eps);
+  assert(abs((1.0 - parser.valueEvaluateExpr("log(exp(1.0))")).c) < eps);
+  assert(abs((-0.8660092970238366 - parser.valueEvaluateExpr("sin(cos(3.14) / 3 * 3.1415)")).c) < eps);
+  assert(abs((4.0 - parser.valueEvaluateExpr("-(0.1 - 4.1)")).c) < eps);
+  assert(abs((4.2 - parser.valueEvaluateExpr("-(-0.1 - 4.1)")).c) < eps);
   cout << "(3+(4-1))*5 = " << parser.valueEvaluateExpr("(3+(4-1))*5") << '\n';
-  assert(abs(30.0 - parser.valueEvaluateExpr("(3+(4-1))*5")) < eps);
+  assert(abs((30.0 - parser.valueEvaluateExpr("(3+(4-1))*5")).c) < eps);
   cout << "(3+(4-1))5 = " << parser.valueEvaluateExpr("(3+(4-1))5") << '\n';
-  assert(abs(30.0 - parser.valueEvaluateExpr("(3+(4-1))5")) < eps);
+  assert(abs((30.0 - parser.valueEvaluateExpr("(3+(4-1))5")).c) < eps);
   cout << "(3+(4-1)) 5 = " << parser.valueEvaluateExpr("(3+(4-1)) 5") << '\n';
-  assert(abs(30.0 - parser.valueEvaluateExpr("(3+(4-1)) 5")) < eps);
+  assert(abs((30.0 - parser.valueEvaluateExpr("(3+(4-1)) 5")).c) < eps);
   cout << "5(3+(4-1)) = " << parser.valueEvaluateExpr("5(3+(4-1))") << '\n';
-  assert(abs(30.0 - parser.valueEvaluateExpr("5(3+(4-1))")) < eps);
+  assert(abs((30.0 - parser.valueEvaluateExpr("5(3+(4-1))")).c) < eps);
   cout << "5 (3+(4-1)) = " << parser.valueEvaluateExpr("5 (3+(4-1))") << '\n';
-  assert(abs(30.0 - parser.valueEvaluateExpr("5 (3+(4-1))")) < eps);
+  assert(abs((30.0 - parser.valueEvaluateExpr("5 (3+(4-1))")).c) < eps);
   cout << '\n';
   try {
     cout << "Evaluating \n";
@@ -338,15 +338,70 @@ int main() {
   parser.setMode(ParserMode::LINEAR_EQ_SOLVER);
   cout << "Solving 3x + 5 = 1\n";
   cout << parser.formatEvaluateExpr("3x + 5 = 1") << '\n';
+  assert(aeq(-0.75, parser.valueEvaluateExpr("3x + 5 = 1")));
+  cout << '\n';
   cout << "Solving 3x = 1\n";
   cout << parser.formatEvaluateExpr("3x = 1") << '\n';
+  assert(aeq(1.0 / 3.0, parser.valueEvaluateExpr("3x = 1")));
+  cout << '\n';
   cout << "Solving x - 1 = (1 - 11)\n";
   cout << parser.formatEvaluateExpr("x - 1 = (1 - 11)") << '\n';
+  assert(aeq(-9.0, parser.valueEvaluateExpr("x - 1 = (1 - 11)")));
+  cout << '\n';
   cout << "Solving 3(x - 1) = 3(1 - 11)\n";
   cout << parser.formatEvaluateExpr("3(x - 1) = 3(1 - 11)") << '\n';
+  assert(aeq(-9.0, parser.valueEvaluateExpr("3(x - 1) = 3(1 - 11)")));
+  cout << '\n';
   cout << "Solving -(x + 1) = 3(1 - 11) ^ 2\n";
   cout << parser.formatEvaluateExpr("-(x + 1) = 3(1 - 11) ^ 2") << '\n';
+  assert(aeq(-301.0, parser.valueEvaluateExpr("-(x + 1) = 3(1 - 11) ^ 2")));
+  cout << '\n';
+  cout << "Solving 2 * x + 0.5 = 1\n";
+  cout << parser.formatEvaluateExpr("2 * x + 0.5 = 1") << '\n';
+  assert(aeq(0.25, parser.valueEvaluateExpr("2 * x + 0.5 = 1")));
+  cout << '\n';
+  cout << "Solving 2x + 1 = 2(1-x)\n";
+  cout << parser.formatEvaluateExpr("2x + 1 = 2(1-x)") << '\n';
+  assert(aeq(0.25, parser.valueEvaluateExpr("2x + 1 = 2(1-x)")));
+  cout << '\n';
 
+  try {
+    cout << "Solving 3 + 4 = 2\n";
+    parser.valueEvaluateExpr("3 + 4 = 2");
+    cerr << "This should not be printed!!!!!\n";
+    assert(false);
+  }
+  catch (const std::exception& e) {
+    cout << e.what() << '\n';
+  }
+  try {
+    cout << "Solving 3x + 4 = (2x + x)\n";
+    parser.valueEvaluateExpr("3x + 4 = (2x + x)");
+    cerr << "This should not be printed!!!!!\n";
+    assert(false);
+  }
+  catch (const std::exception& e) {
+    cout << e.what() << '\n';
+  }
+  try {
+    cout << "Solving sin(x) = (2x + x)\n";
+    parser.valueEvaluateExpr("sin(x) = (2x + x)");
+    cerr << "This should not be printed!!!!!\n";
+    assert(false);
+  }
+  catch (const std::exception& e) {
+    cout << e.what() << '\n';
+  }
+  try {
+    cout << "Solving (x)*x = (2x + x)\n";
+    parser.valueEvaluateExpr("(x)*x = (2x + x)");
+    cerr << "This should not be printed!!!!!\n";
+    assert(false);
+  }
+  catch (const std::exception& e) {
+    cout << e.what() << '\n';
+  }
+    
   cout << "\n\n=============================================\n\n";
   cout << "\nTests passed.\n";
 

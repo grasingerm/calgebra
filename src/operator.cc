@@ -31,7 +31,10 @@ void Carrot::_eval(TokenQueue&, TokenStack& token_stack) const {
   auto value0 = popOperandValue(token_stack, "'^' operator");
   auto value1 = popOperandValue(token_stack, "'^' operator");
 
-  auto result = std::pow(value1, value0);
+  if (value0.x != 0.0 || value1.x != 0.0)
+    throw std::runtime_error("Cannot perform exponentiation with a monomial");
+
+  monomial result { 0.0, std::pow(value1.c, value0.c) };
   token_stack.emplace(new Operand(result));
 }
 
@@ -88,22 +91,6 @@ TokenHandler Addition::getInverse() const {
 
 TokenHandler Subtraction::getInverse() const { 
   return TokenHandler(new Addition()); 
-}
-
-void AbstractOperator::simplify(TokenQueue& pflhs, TokenStack& token_stack) const {
-  if (token_stack.empty()) 
-    throw std::logic_error("Misbalanced expression");
-
-  if (isTokenX(token_stack.top().get())) this->_pushToTokenStack(token_stack);
-  else {
-    pflhs.emplace(token_stack.top());
-    token_stack.pop();
-    pflhs.emplace(this->getInverse());
-  }
-}
-
-void Negation::simplify(TokenQueue& pflhs, TokenStack&) const {
-  pflhs.emplace(new Negation());
 }
 
 }

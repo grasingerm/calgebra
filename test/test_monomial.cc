@@ -28,15 +28,15 @@ int main() {
       for (int j = 0; j < 4; ++j) {
         monomial res;
 
-        assert(ae(m[i] + m[j], m[j] + m[i]));
+        assert(aeq(m[i] + m[j], m[j] + m[i]));
 
         res.x = x[i] + x[j];
         res.c = c[i] + c[j];
-        assert(ae(m[i] + m[j], res));
+        assert(aeq(m[i] + m[j], res));
         
         res.x = x[i] - x[j];
         res.c = c[i] - c[j];
-        assert(ae(m[i] - m[j], res));
+        assert(aeq(m[i] - m[j], res));
       }
     }
     for (int k = 0; k < 2; ++k) {
@@ -44,11 +44,11 @@ int main() {
       
       res.x = x[k] * c[k+2];
       res.c = c[k] * c[k+2];
-      assert(ae(m[k] * m[k+2], res));
+      assert(aeq(m[k] * m[k+2], res));
 
       res.x = x[k] / c[k+2];
       res.c = c[k] / c[k+2];
-      assert(ae(m[k] / m[k+2], res));
+      assert(aeq(m[k] / m[k+2], res));
 
       try {
         m[k] * m[k];

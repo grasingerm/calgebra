@@ -2,6 +2,7 @@
 #define __SCALC_HH
 
 #include "token.hh"
+#include "monomial.hh"
 #include "operand.hh"
 #include "operator.hh"
 #include "parenthesis.hh"

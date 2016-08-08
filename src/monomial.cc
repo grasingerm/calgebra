@@ -34,6 +34,14 @@ monomial operator-(const monomial& m1, const monomial& m2) {
   return retval;
 }
 
+monomial operator-(const monomial& m) {
+  monomial retval;
+  retval.x = -m.x;
+  retval.c = -m.c;
+
+  return retval;
+}
+
 monomial operator*(const monomial& m1, const monomial& m2) {
   monomial retval;
   if (m2.x == 0) {

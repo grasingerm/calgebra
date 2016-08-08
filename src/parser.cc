@@ -95,6 +95,13 @@ TokenQueue Parser::exprToInfix(const char* expr) {
         expr = pend;
         break;
       }
+      case '=':
+      {
+        if (mode == ParserMode::NORMAL)
+          throw runtime_error("Equals sign '=' should not be used in 'normal' "
+                              "mode");
+        break;
+      }
       default:
       {
         if (!infix_queue.empty() && isTokenOperand(infix_queue.back().get()))
@@ -158,7 +165,7 @@ TokenQueue Parser::infixToPostfix(TokenQueue& infix_queue) {
   return postfix_queue;
 }
 
-double Parser::evaluatePostfix(TokenQueue& postfix_queue) {
+monomial Parser::evaluatePostfix(TokenQueue& postfix_queue) {
   TokenStack token_stack;
 
   while (!postfix_queue.empty()) {
@@ -167,24 +174,18 @@ double Parser::evaluatePostfix(TokenQueue& postfix_queue) {
     postfix_queue.pop();
   }
 
-  const double retval = popOperandValue(token_stack, "final value");
+  const auto retval = popOperandValue(token_stack, "final value");
   if (!token_stack.empty()) throw logic_error("Tokens left on the stack");
 
   return retval;
 }
 
-double Parser::valueEvaluateExpr(const char* expr) {
-  TokenQueue infix_queue = exprToInfix(expr);
-  TokenQueue postfix_queue = infixToPostfix(infix_queue);
-  if (postfix_queue.empty()) throw logic_error("Expression is empty of operands");
-  return evaluatePostfix(postfix_queue);
-}
-
-string Parser::formatEvaluateExpr(const char* expr) {
-  stringstream ss;
+monomial Parser::valueEvaluateExpr(const char* expr) {
   if (mode == ParserMode::NORMAL) {
-    ss << "ans = " << valueEvaluateExpr(expr);
-    return ss.str();
+    TokenQueue infix_queue = exprToInfix(expr);
+    TokenQueue postfix_queue = infixToPostfix(infix_queue);
+    if (postfix_queue.empty()) throw logic_error("Expression is empty of operands");
+    return evaluatePostfix(postfix_queue);
   }
   else if (mode == ParserMode::LINEAR_EQ_SOLVER) {
     string sexpr(expr);
@@ -197,35 +198,38 @@ string Parser::formatEvaluateExpr(const char* expr) {
       if (rhs_str.find('=') != string::npos)
         throw logic_error("More than one equals sign '=' in expression");
 
-      auto lhs_inqueue = exprToInfix(lhs_str.c_str());
+      // simplify left hand side
+      auto lhs_inqueue  = exprToInfix(lhs_str.c_str());
       auto lhs_posqueue = infixToPostfix(lhs_inqueue);
-      auto rhs_inqueue = exprToInfix(rhs_str.c_str());
+      const auto lhs    = evaluatePostfix(lhs_posqueue);
+
+      // simplify right hand side
+      auto rhs_inqueue  = exprToInfix(rhs_str.c_str());
       auto rhs_posqueue = infixToPostfix(rhs_inqueue);
+      const auto rhs    = evaluatePostfix(rhs_posqueue);
 
-      TokenStack token_stack;
-      while (!lhs_posqueue.empty()) {
-        const auto ptoken = lhs_posqueue.front();
-        ptoken->simplify(rhs_posqueue, token_stack);
-        lhs_posqueue.pop();
-      }
+      // solve for x
+      const auto denominator = rhs.x - lhs.x;
+      if (denominator == 0) 
+        throw logic_error("Equation is not solvable; x is eliminated.");
+      const monomial x = (lhs.c - rhs.c) / denominator;
 
-      while (!token_stack.empty() && isTokenOperator(token_stack.top().get())) {
-        const auto ptoken = token_stack.top();
-        token_stack.pop();
-        if (isTokenX(token_stack.top().get())) token_stack.pop();
-        if (isTokenOperand(token_stack.top().get())) {
-          rhs_posqueue.emplace(token_stack.top());
-          token_stack.pop();
-        }
-        else throw logic_error("Operators unbalanced on LHS of expression");
-        rhs_posqueue.emplace(
-            dynamic_cast<const AbstractOperator*>(ptoken.get())->getInverse());
-      }
-
-      ss << "x = " << evaluatePostfix(rhs_posqueue);
-      return ss.str();
+      return x;
     }
     else throw logic_error("No equals sign '=' in expression");
+  }
+  else throw logic_error("Parser mode is invalid");
+}
+
+string Parser::formatEvaluateExpr(const char* expr) {
+  stringstream ss;
+  if (mode == ParserMode::NORMAL) {
+    ss << "ans = " << valueEvaluateExpr(expr);
+    return ss.str();
+  }
+  else if (mode == ParserMode::LINEAR_EQ_SOLVER) {
+    ss << "x = " << valueEvaluateExpr(expr);
+    return ss.str();
   }
   else throw logic_error("Parser mode is invalid");
 }

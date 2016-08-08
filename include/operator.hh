@@ -22,7 +22,6 @@ public:
     precedence(precedence), associativity(associativity) {}
   virtual ~AbstractOperator() {}
   virtual std::string toString() const=0;
-  virtual void simplify(TokenQueue&, TokenStack&) const;
   virtual TokenHandler getInverse() const=0;
   inline auto getPrecedence() const noexcept { return precedence; }
   inline auto getAssociativity() const noexcept { return associativity; }
@@ -61,7 +60,6 @@ public:
   virtual ~Negation() {}
   virtual TokenHandler getInverse() const 
     { return TokenHandler(new Negation()); }
-  virtual void simplify(TokenQueue&, TokenStack&) const;
   virtual std::string toString() const { return std::string(1, '-'); }
 private:
   virtual void _eval(TokenQueue&, TokenStack&) const;

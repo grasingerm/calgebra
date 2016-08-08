@@ -10,7 +10,7 @@ void Operand::_eval(TokenQueue&, TokenStack& token_stack) const {
   token_stack.emplace(new Operand(*this));
 }
 
-double popOperandValue(TokenStack& token_stack, const char* what_for) {
+monomial popOperandValue(TokenStack& token_stack, const char* what_for) {
   char what[256] = "Not enough operands for ";
 
   const auto ptoken = (!token_stack.empty()) ? 
@@ -19,18 +19,10 @@ double popOperandValue(TokenStack& token_stack, const char* what_for) {
   if (ptoken == nullptr) 
     throw std::logic_error(std::strncat(what, what_for, 224));
 
-  const double retval = ptoken->getValue();
+  const monomial retval = ptoken->getValue();
   token_stack.pop();
 
   return retval;
-}
-
-void X::_parse(TokenQueue& postfix_queue, TokenStack&) const {
-  postfix_queue.emplace(new X(*this));
-}
-
-void X::_eval(TokenQueue&, TokenStack& token_stack) const {
-  token_stack.emplace(new X(*this));
 }
 
 }

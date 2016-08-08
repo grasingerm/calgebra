@@ -2,6 +2,7 @@
 #define __PARSER_HH
 
 #include "token.hh"
+#include "monomial.hh"
 #include <string>
 
 namespace scalc {
@@ -17,9 +18,9 @@ public:
   void setMode(ParserMode newmode) { mode = newmode; }
   TokenQueue exprToInfix(const char*);
   TokenQueue infixToPostfix(TokenQueue&);
-  double evaluatePostfix(TokenQueue&);
+  monomial evaluatePostfix(TokenQueue&);
 
-  double valueEvaluateExpr(const char*);
+  monomial valueEvaluateExpr(const char*);
   std::string formatEvaluateExpr(const char*);
 };
 
