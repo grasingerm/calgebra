@@ -122,6 +122,7 @@ TokenQueue Parser::exprToInfix(const char* expr) {
 
         if (name == "log") infix_queue.emplace(new MFunction(log, name));
         else if (name == "exp") infix_queue.emplace(new MFunction(exp, name));
+        else if (name == "abs") infix_queue.emplace(new MFunction(std::abs, name));
         else if (name == "sin") infix_queue.emplace(new MFunction(sin, name));
         else if (name == "cos") infix_queue.emplace(new MFunction(cos, name));
         else if (name == "tan") infix_queue.emplace(new MFunction(tan, name));

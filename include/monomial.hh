@@ -28,7 +28,7 @@ inline bool operator==(const monomial& m1, const monomial& m2) {
 }
 
 inline bool aeq(const monomial& m1, const monomial& m2, const double eps=1e-9) {
-  return (abs(m1.x - m2.x) < eps && abs(m1.c - m2.c) < eps);
+  return (std::abs(m1.x - m2.x) < eps && std::abs(m1.c - m2.c) < eps);
 }
 
 }

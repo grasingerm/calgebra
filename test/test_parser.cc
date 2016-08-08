@@ -338,7 +338,7 @@ int main() {
   parser.setMode(ParserMode::LINEAR_EQ_SOLVER);
   cout << "Solving 3x + 5 = 1\n";
   cout << parser.formatEvaluateExpr("3x + 5 = 1") << '\n';
-  assert(aeq(-0.75, parser.valueEvaluateExpr("3x + 5 = 1")));
+  assert(aeq(-1.3333333333, parser.valueEvaluateExpr("3x + 5 = 1")));
   cout << '\n';
   cout << "Solving 3x = 1\n";
   cout << parser.formatEvaluateExpr("3x = 1") << '\n';
