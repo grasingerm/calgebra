@@ -1,3 +1,9 @@
+calgebra
+========
+Scientific calculator and linear algebraic solver written in C++
+
+Build and Run
+-------------
 This project is setup to be build using CMake. To bulid with linux, using the
 following from the root directory:
 
